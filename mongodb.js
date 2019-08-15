@@ -19,13 +19,60 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
 
     const db = client.db(databaseName)
 
-    db.collection('tasks').deleteOne({
-        description: "udemy AWS"
-    }).then((result) => {
-        console.log(result)
-    }).catch((error)=>{
-        console.log(error)
+    db.collection('users').insertOne({
+        name: 'John',
+        age: 55
+    }, (error, result) => {
+        if (error) {
+            return console.log('Unable to insert user')
+        }
+        console.log(result.ops)
     })
+
+    db.collection('users').insertMany([
+        {
+            name: 'Liwen',
+            age: 47
+        },
+        {
+            name: 'Jerry',
+            age: 18
+        }
+    ], (error, result) => {
+        if (error) {
+            return console.log('Unable to insert users')
+        }
+        console.log(result.ops)
+    })
+
+    db.collection('tasks').insertMany([
+        {
+            description: 'udemy AWS',
+            completed: true
+        },
+        {
+            description: 'Udemy node.js',
+            completed: false
+        },
+        {
+            description: 'Chaos test investigation',
+            completed: false
+        }
+    ], (error, result) => {
+        if (error) {
+            return console.log('Unable to insert tasks')
+        }
+
+        console.log(result.ops)
+    })
+
+    // db.collection('tasks').deleteOne({
+    //     description: "udemy AWS"
+    // }).then((result) => {
+    //     console.log(result)
+    // }).catch((error)=>{
+    //     console.log(error)
+    // })
     // db.collection('users').deleteMany({
     //     name: 'Lei'
     // }).then((result) => {
@@ -86,51 +133,4 @@ MongoClient.connect(connectionURL, { useNewUrlParser: true }, (error, client) =>
     //         console.log(result)
     //     }
     // )
-    // db.collection('users').insertOne({
-    //     _id: id,
-    //     name: 'John',
-    //     age: 55
-    // }, (error, result) => {
-    //     if(error) {
-    //         return console.log('Unable to insert user')
-    //     }
-    //     console.log(result.ops)
-    // })
-
-    // db.collection('users').insertMany([
-    //     {
-    //         name: 'Liwen',
-    //         age: 47
-    //     },
-    //     {
-    //         name: 'Jerry',
-    //         age: 18
-    //     }
-    // ], (error, result) => {
-    //     if (error) {
-    //         return console.log('Unable to insert users')
-    //     }
-    //     console.log(result.ops)
-    // })
-
-    // db.collection('tasks').insertMany([
-    //     {
-    //         description: 'udemy AWS',
-    //         completed: true
-    //     },
-    //     {
-    //         description: 'Udemy node.js',
-    //         completed: false
-    //     },
-    //     {
-    //         description: 'Chaos test investigation',
-    //         completed: false
-    //     }
-    // ], (error, result) => {
-    //     if (error) {
-    //         return console.log('Unable to insert tasks')
-    //     }
-
-    //     console.log(result.ops)
-    // })
 })
