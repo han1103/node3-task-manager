@@ -1,152 +1,95 @@
 const express = require('express')
 require('./db/mongoose')
-const User = require('./models/user')
-const Task = require('./models/tasks')
+const userRouter = require('./routers/user')
+const taskRouter = require('./routers/task')
 
 const app = express()
 const port = process.env.PORT || 3000
 
 app.use(express.json())
 
-// app.post('/users', (req, res) => {
-//     const user = new User(req.body)
-//     user.save().then(() => {
-//         res.status(201).send(user)
-//     }).catch((error) => {
-//         //console.log('error', error)
-//         res.status(400).send(error)
-//     })
+// app.use((req, res, next) => {
+//     res.status(503).send('The server is in maintenance')
 // })
 
-app.post('/users', async (req, res) => {
-    const user = new User(req.body)
-    try {
-        await user.save()
-        res.status(201).send(user)
-    } catch (error) {
-        //console.log('error', error)
-        res.status(400).send(error)
-    }
-})
-
-// app.get('/users', (req, res) => {
-//     User.find({}).then((users) => {
-//         res.send(users)
-//     }).catch((error) => {
-//         res.status(500).send(error)
-//     })
-// })
-
-app.get('/users', async (req, res) => {
-    try {
-        const users = await User.find({})
-        res.send(users)
-    }
-    catch (error) {
-        res.status(500).send(error)
-    }
-})
-
-// app.get('/users/:id', (req, res) => {
-//     const _id = req.params["id"]
-
-//     User.findById(_id).then((user) => {
-//         if (!user) {
-//             res.status(404).send()
-//         }
-//         else {
-//             res.send(user)
-//         }
-//     }).catch((error) => {
-//         res.status(500).send(error)
-//     })
-// })
-
-app.get('/users/:id', async (req, res) => {
-    const _id = req.params["id"]
-
-    try {
-        const user = await User.findById(_id);
-        if (!user) {
-            res.status(404).send()
-        }
-        else {
-            res.send(user)
-        }
-    } catch (error) {
-        res.status(500).send(error)
-    }
-})
-
-app.patch('/users/:id', async (req, res) => {
-    try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body,  {new:true, runValidators: true})
-
-        if(!user) {
-            return res.send(404).send()
-        }
-        res.status(201).send(user)        
-    } catch(e) {
-        e.status(400).send(e)
-    }
-})
-
-app.post('/tasks', async (req, res) => {
-    const task = new Task(req.body)
-    try {
-        await task.save()
-        res.status(201).send(task)
-    } catch (error) {
-        res.status(400).send(error)
-    }
-    // task.save().then(() => {
-    //     res.status(201).send(task)
-    // }).catch((error) => {
-    //     res.status(400).send(error)
-    // })
-})
-
-app.get("/tasks", async (req, res) => {
-    try {
-        const tasks = await Task.find({})
-        res.send(tasks)
-    } catch (error) {
-        res.status(500).send(error)
-    }
-    // Task.find({}).then((tasks) => {
-    //     res.send(tasks)
-    // }).catch((error) => {
-    //     res.status(500).send(error)
-    // })
-})
-
-app.get("/tasks/:id", async (req, res) => {
-    const id = req.params.id
-    try {
-        const task = await Task.findById(id)
-        if (!task) {
-            res.status(404).send()
-        }
-        else {
-            res.send(task)
-        }
-    } catch (error) {
-        res.status(500).send(error)
-    }
-
-    // Task.findById(id).then((task) => {
-    //     if (!task) {
-    //         res.status(404).send()
-    //     }
-    //     else {
-    //         res.send(task)
-    //     }
-    // }).catch((error) => {
-    //     res.status(500).send(error)
-    // })
-})
-
+app.use(userRouter)
+app.use(taskRouter)
 
 app.listen(port, () => {
     console.log('Server is up on port ' + port)
 })
+
+//const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
+const myFunction = async() => {
+    // const password = '1234&%$!'
+    // const encryptedPassword = await bcrypt.hash(password, 8)
+
+    // console.log('password', password)
+    // console.log('encryptedPassword', encryptedPassword)
+
+    // const isMatch = await bcrypt.compare('2234&%$!', encryptedPassword)
+    // console.log('isMatch', isMatch)
+    const token = jwt.sign({_id: 'abc123'}, 'thisismynewcourse', {expiresIn: '1s'})
+    console.log(token)
+
+    const data = jwt.verify(token, 'thisismynewcourse')
+    console.log(data)
+}
+
+//myFunction()
+
+const bcrypt = require('bcryptjs')
+
+const myFunction1 = async() => {
+    const password = '1234&%$!'
+    var encryptedPassword = await bcrypt.hash(password, 8)
+
+    console.log('password', password)
+    console.log('encryptedPassword', encryptedPassword)
+
+    encryptedPassword = await bcrypt.hash(password, 8)
+    console.log('encryptedPassword1', encryptedPassword)
+    // const isMatch = await bcrypt.compare('2234&%$!', encryptedPassword)
+    // console.log('isMatch', isMatch)
+
+}
+
+myFunction1()
+
+// const password = '1234&%$!'
+// var encryptedPassword
+// bcrypt.hash(password, 8).then((result) => {
+//     encryptedPassword = result
+//     console.log('password', password)
+//     console.log('encryptedPassword : 111', encryptedPassword)
+// }).catch((e) => { console.log('Error', e) })
+
+const pet = {
+    "name": "Pig"
+}
+
+pet.toJSON = function() {
+    console.log('this', this)
+    return this
+}
+
+//console.log(JSON.stringify(pet))
+console.log(JSON.stringify(pet))
+
+const Task = require('./models/tasks')
+const User = require('./models/user')
+
+// const aFunction = async() => {
+//     // const task = await Task.findById('5d6be8ead848cf6d1859b52e')
+//     // await task.populate('owner').execPopulate()
+//     // console.log(task.owner)
+
+//     const user = await User.findById('5d6be7b837bde85e887ba90f')
+//     await user.populate('tasks').execPopulate()
+//     console.log(user.tasks)
+//     console.log(user)
+// }
+
+//aFunction()
